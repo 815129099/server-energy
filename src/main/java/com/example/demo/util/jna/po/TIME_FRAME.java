@@ -6,15 +6,15 @@ import java.util.Arrays;
 import java.util.List;
 
 public class TIME_FRAME extends Structure {
-    byte tm_year;
-    byte tm_mon;
-    byte tm_mday;
-    byte tm_hour_start;
-    byte tm_min_start;
-    byte tm_sec_start;
-    byte tm_hour_end;
-    byte tm_min_end;
-    byte tm_sec_end;
+    public byte tm_year;
+    public byte tm_mon;
+    public byte tm_mday;
+    public byte tm_hour_start;
+    public byte tm_min_start;
+    public byte tm_sec_start;
+    public byte tm_hour_end;
+    public byte tm_min_end;
+    public byte tm_sec_end;
 
     public static class ByReference extends TIME_FRAME implements Structure.ByReference { }
     public static class ByValue  extends TIME_FRAME  implements Structure.ByValue { }

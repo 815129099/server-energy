@@ -19,4 +19,14 @@ public class POWER extends Structure {
         return Arrays.asList(new String[]{"positive_active_power", "reverse_active_power",
                 "positive_reative_power", "reverse_reactive_power"});
     }
+
+    @Override
+    public String toString() {
+        return "POWER{" +
+                "positive_active_power=" + positive_active_power +
+                ", reverse_active_power=" + reverse_active_power +
+                ", positive_reative_power=" + positive_reative_power +
+                ", reverse_reactive_power=" + reverse_reactive_power +
+                '}';
+    }
 }

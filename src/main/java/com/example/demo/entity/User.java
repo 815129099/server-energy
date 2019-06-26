@@ -1,8 +1,13 @@
 package com.example.demo.entity;
 
+import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.activerecord.Model;
+import com.example.demo.util.TimeConverter;
+import com.wuwenze.poi.annotation.Excel;
+import com.wuwenze.poi.annotation.ExcelField;
+
 import java.io.Serializable;
 
 /**
@@ -13,29 +18,40 @@ import java.io.Serializable;
  * @author lwx
  * @since 2019-03-26
  */
+@Excel("用户列表")
 public class User extends Model<User> {
 
     private static final long serialVersionUID = 1L;
 
+    @ExcelField(value = "ID",width = 30)
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
+    @ExcelField(value = "工号",required = true)
     private String geNumber;
 
+    @ExcelField(value = "用户名")
     private String geName;
 
+    @ExcelField(value = "密码")
     private String password;
 
+    @ExcelField(value = "用户状态")
     private String userState;
 
+    @ExcelField(value = "手机号")
     private String phone;
 
+    @ExcelField(value = "邮箱")
     private String email;
 
+    @ExcelField(value = "创建时间",writeConverter = TimeConverter.class)
     private String createTime;
 
+    @ExcelField(value = "修改时间",writeConverter = TimeConverter.class)
     private String updateTime;
 
+    @ExcelField(value = "验证码")
     private String code;
 
     public String getCode() {

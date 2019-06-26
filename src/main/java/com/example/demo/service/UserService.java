@@ -4,6 +4,7 @@ import com.example.demo.entity.User;
 import com.baomidou.mybatisplus.service.IService;
 import com.github.pagehelper.Page;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -33,6 +34,7 @@ public interface UserService extends IService<User> {
 
     boolean addUser(User user);
 
+    List<User> testUserList();
 
 
 

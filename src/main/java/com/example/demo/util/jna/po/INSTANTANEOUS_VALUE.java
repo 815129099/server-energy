@@ -20,11 +20,11 @@ public class INSTANTANEOUS_VALUE extends Structure {
     public double Qa;
     public double Qb;
     public double Qc;
-    public  double PF; // 功率因数
+    public double PF; // 功率因数
     public double PFa;
     public double PFb;
-    public  double PFc;
-    public  double Hz; // 频率
+    public double PFc;
+    public double Hz; // 频率
 
     public static class ByReference extends INSTANTANEOUS_VALUE implements Structure.ByReference { }
     public static class ByValue  extends INSTANTANEOUS_VALUE  implements Structure.ByValue { }
@@ -32,6 +32,31 @@ public class INSTANTANEOUS_VALUE extends Structure {
     @Override
     protected List getFieldOrder() {
         return Arrays.asList(new String[]{"Ua", "Ub", "Uc", "Ia","Ib","Ic","P","Pa","Pb",
-                "Pc","Q","Qz","Qb","Qc","PF","PFa","PFb","PFc","Hz"});
+                "Pc","Q","Qa","Qb","Qc","PF","PFa","PFb","PFc","Hz"});
+    }
+
+    @Override
+    public String toString() {
+        return "INSTANTANEOUS_VALUE{" +
+                "Ua=" + Ua +
+                ", Ub=" + Ub +
+                ", Uc=" + Uc +
+                ", Ia=" + Ia +
+                ", Ib=" + Ib +
+                ", Ic=" + Ic +
+                ", P=" + P +
+                ", Pa=" + Pa +
+                ", Pb=" + Pb +
+                ", Pc=" + Pc +
+                ", Q=" + Q +
+                ", Qa=" + Qa +
+                ", Qb=" + Qb +
+                ", Qc=" + Qc +
+                ", PF=" + PF +
+                ", PFa=" + PFa +
+                ", PFb=" + PFb +
+                ", PFc=" + PFc +
+                ", Hz=" + Hz +
+                '}';
     }
 }

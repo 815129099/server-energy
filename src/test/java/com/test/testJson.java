@@ -33,9 +33,11 @@ public class testJson {
 
     @Test
     public void testMenu() {
+
         Object o;
         if (redisTemplate.opsForValue().get("menuList") == null) {
-        List<Map> menuList = menuDao.getMenuList();
+            System.out.println("--------------------------------------------------------");
+        List<LinkedHashMap> menuList = menuDao.getMenuList();
         //用于判断是否已存在当前节点
         List<Object> strList = new ArrayList<Object>();
         List<TreeNode> treeNodeList = new ArrayList<TreeNode>();

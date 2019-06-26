@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -102,5 +103,10 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
         userDao.insert(user);
         isSuccess = true;
         return isSuccess;
+    }
+
+    @Override
+    public List<User> testUserList() {
+        return this.userDao.testUserList();
     }
 }

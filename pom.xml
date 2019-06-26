@@ -31,9 +31,10 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter</artifactId>
+			<artifactId>spring-boot-starter-web</artifactId>
 			<exclusions>
 				<exclusion>
 					<groupId>org.springframework.boot</groupId>
@@ -203,12 +204,15 @@
 			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
 
-		<!--excel-->
+
+
+		<!--ExcelKit-->
 		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>poi</artifactId>
-			<version>3.9</version>
+			<groupId>com.wuwenze</groupId>
+			<artifactId>ExcelKit</artifactId>
+			<version>2.0.71</version>
 		</dependency>
+
 
 		<!--pagehelper-->
 		<dependency>
@@ -232,6 +236,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
 					<fork>true</fork>
+					<mainClass>com.example.demo.DemoApplication</mainClass>
 				</configuration>
 			</plugin>
 		</plugins>

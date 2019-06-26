@@ -1,5 +1,6 @@
 package com.example.demo.mapper;
 
+import com.example.demo.entity.Record;
 import com.example.demo.entity.User;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
@@ -25,5 +26,8 @@ public interface UserDao extends BaseMapper<User> {
     User getUserByNumber(String geNumber);
 
     List<User> userList(@Param("parameter") String parameter);
+
+    List<User> testUserList();
+
 
 }

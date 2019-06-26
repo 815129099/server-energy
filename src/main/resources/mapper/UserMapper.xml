@@ -13,27 +13,32 @@
 
     <select id="findRoles" resultType="java.lang.String" parameterType="java.lang.String">
         select r.role
-        from role r
+        from Role r
         where geNumber = #{geNumber}
     </select>
 
     <select id="findPermissions" resultType="java.lang.String" parameterType="java.lang.String">
         select r.permission
-        from role r
+        from Role r
         where geNumber = #{geNumber}
     </select>
 
     <select id="getUserByNumber" resultType="com.example.demo.entity.User" parameterType="java.lang.String">
         select *
-        from user
+        from User
         where geNumber = #{geNumber}
     </select>
 
     <select id="userList" resultType="com.example.demo.entity.User">
         select id,geNumber,geName,userState,phone,email,date_format(createTime,'%Y-%m-%d %H:%i:%s') as createTime,date_format(updateTime,'%Y-%m-%d %H:%i:%s') as updateTime
-        from user
+        from User
         where userState != "删除" and  geNumber like CONCAT('%',#{parameter},'%') or geName like CONCAT('%',#{parameter},'%')
               or phone like CONCAT('%',#{parameter},'%') or userState = #{parameter}
+    </select>
+
+    <select id="testUserList" resultType="com.example.demo.entity.User">
+        select *
+        from User
     </select>
 
 

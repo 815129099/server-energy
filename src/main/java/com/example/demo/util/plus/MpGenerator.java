@@ -30,7 +30,7 @@ public class MpGenerator {
         GlobalConfig gc = new GlobalConfig();
         gc.setAuthor("lwx");
         gc.setOutputDir("E://code/energy/Springboot/src/main/java");
-        gc.setFileOverride(false);// 是否覆盖同名文件，默认是false
+        gc.setFileOverride(true);// 是否覆盖同名文件，默认是false
         gc.setActiveRecord(true);// 不需要ActiveRecord特性的请改为false
         gc.setEnableCache(false);// XML 二级缓存
         gc.setBaseResultMap(true);// XML ResultMap
@@ -57,16 +57,16 @@ public class MpGenerator {
         });
         dsc.setDriverName("com.mysql.jdbc.Driver");
         dsc.setUsername("root");
-        dsc.setPassword("960521");
-        dsc.setUrl("jdbc:mysql://localhost:3306/energy?useUnicode=true&characterEncoding=utf8");
+        dsc.setPassword("Sa123456");
+        dsc.setUrl("jdbc:mysql://10.30.100.110:3306/erbs?useUnicode=true&characterEncoding=utf8");
         mpg.setDataSource(dsc);
 
         // 策略配置
         StrategyConfig strategy = new StrategyConfig();
         // strategy.setCapitalMode(true);// 全局大写命名 ORACLE 注意
-        strategy.setTablePrefix(new String[] { "user_" });// 此处可以修改为您的表前缀
+        strategy.setTablePrefix(new String[] { "PowerAnalyze_" });// 此处可以修改为您的表前缀
         strategy.setNaming(NamingStrategy.nochange);// 表名生成策略
-        strategy.setInclude(new String[] { "user" }); // 需要生成的表
+        strategy.setInclude(new String[] { "PowerAnalyze" }); // 需要生成的表
         // strategy.setExclude(new String[]{"test"}); // 排除生成的表
         // 自定义实体父类
         // strategy.setSuperEntityClass("com.baomidou.demo.TestEntity");

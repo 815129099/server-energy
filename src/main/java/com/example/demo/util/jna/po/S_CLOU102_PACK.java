@@ -13,7 +13,7 @@ public class S_CLOU102_PACK extends Structure{
     public byte compareTheTime;// 0为不对时，1为对时
     public byte[] time = new byte[20];// 时间
     public short framenum;// 帧号
-    public long meternum;// 表号
+    public NativeLong meternum;// 表号
     public TIME_FRAME timeFrame; //时间范围信息体
     public byte recordnum; //记录
 

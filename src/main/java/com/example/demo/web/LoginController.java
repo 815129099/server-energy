@@ -4,16 +4,20 @@ package com.example.demo.web;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 
 
+import com.example.demo.entity.Record;
 import com.example.demo.entity.User;
+import com.example.demo.service.RecordService;
 import com.example.demo.service.UserService;
 import com.example.demo.util.MyException.ExceptionHandle;
 import com.example.demo.util.MyException.Result;
 import com.example.demo.util.MyException.ResultUtil;
+import com.example.demo.util.shiro.NetworkUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.DisabledAccountException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,13 +30,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author lwx
@@ -48,18 +53,21 @@ public class LoginController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private RecordService recordService;
+
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
-    @RequestMapping(value = "/api/login",produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/api/login", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public Result loginByNumber(@RequestBody User user) {
+    public Result loginByNumber(@RequestBody User user, HttpServletRequest request) {
         Result result = ResultUtil.success();
-        logger.info("登录:"+user.getGeNumber()+"pa:"+user.getPassword());
+        logger.info("登录:" + user.getGeNumber() + "pa:" + user.getPassword());
         Subject subject = SecurityUtils.getSubject();
-        //Session session = subject.getSession(true);
-        // Serializable sessionId = session.getId();
-        // System.out.println(sessionId.toString());
+        Session session = subject.getSession(true);
+        Serializable sessionId = session.getId();
+        logger.info(sessionId.toString());
         UsernamePasswordToken token = new UsernamePasswordToken(user.getGeNumber(), user.getPassword());
         try {
             subject.login(token);
@@ -76,20 +84,21 @@ public class LoginController {
             result.setMsg("未知错误");
             return result;
         }
-        //AccessRecord accessRecord = new AccessRecord();
-        //accessRecord.setIpNumber(NetworkUtil.getIpAddr(request));
-        //accessRecord.setGeNumber(geNumber);
-        // accessRecord.setSessionId(sessionId.toString());
-        //this.utilService.addAccess(accessRecord);
+        Record record = new Record();
+        record.setIP(NetworkUtil.getIpAddr(request));
+        record.setUserName(user.getGeNumber());
+        record.setSessionId(sessionId.toString());
+        recordService.insert(record);
         result.setMsg("success");
         result.setRole(new ArrayList(userService.findRoles(user.getGeNumber())).get(0).toString());
+        token.setHost(NetworkUtil.getIpAddr(request));
         result.setData(token);
         return result;
     }
 
     @RequestMapping("/api/unauth")
     @ResponseBody
-    public Result unauth(){
+    public Result unauth() {
         Result result = ResultUtil.success();
         result.setMsg("未登录");
         result.setStatus(100);
@@ -98,19 +107,19 @@ public class LoginController {
 
     @RequestMapping({"/loginByPhone.do"})
     @ResponseBody
-    public Result loginByPhone(String phone,String code, HttpServletRequest request) {
+    public Result loginByPhone(String phone, String code, HttpServletRequest request) {
         Result result = ResultUtil.success();
         Map<String, Object> map = new HashMap();
-        logger.info("登录:"+phone+code);
+        logger.info("登录:" + phone + code);
         EntityWrapper<User> userWrapper = new EntityWrapper<User>();
-        userWrapper.eq("phone",phone).eq("code",code);
+        userWrapper.eq("phone", phone).eq("code", code);
         User user = userService.selectOne(userWrapper);
-        if(StringUtils.isEmpty(user)){
-            map.put("tip","验证码错误");
-            map.put("code",2);
+        if (StringUtils.isEmpty(user)) {
+            map.put("tip", "验证码错误");
+            map.put("code", 2);
             result.setData(map);
             return result;
-        }else {
+        } else {
             Subject subject = SecurityUtils.getSubject();
             //Session session = subject.getSession(true);
             // Serializable sessionId = session.getId();
@@ -120,22 +129,22 @@ public class LoginController {
                 subject.login(token);
             } catch (UnknownAccountException e) {
                 map.put("tip", "账号不存在");
-                map.put("code",1);
+                map.put("code", 1);
                 result.setData(map);
                 return result;
             } catch (DisabledAccountException e) {
                 map.put("tip", "账号未启用");//
-                map.put("code",1);
+                map.put("code", 1);
                 result.setData(map);
                 return result;
             } catch (IncorrectCredentialsException e) {
                 map.put("tip", "密码错误");
-                map.put("code",1);
+                map.put("code", 1);
                 result.setData(map);
                 return result;
             } catch (Exception e) {
                 map.put("tip", "未知错误");
-                map.put("code",1);
+                map.put("code", 1);
                 result.setData(map);
                 return result;
             }
@@ -153,6 +162,7 @@ public class LoginController {
 
     /**
      * 退出
+     *
      * @return
      */
     @RequestMapping("/logout")
@@ -164,21 +174,21 @@ public class LoginController {
     @RequestMapping("/getCode.do")
     @ResponseBody
     @Transactional
-    public Result getCode(String phone){
+    public Result getCode(String phone) {
         Result result = ResultUtil.success();
         try {
-            logger.info("phone:"+phone);
+            logger.info("phone:" + phone);
             Map<String, Object> map = new HashMap();
             boolean isSuccess = userService.getCode(phone);
-            if(isSuccess){
-                map.put("tip","success");
+            if (isSuccess) {
+                map.put("tip", "success");
                 result.setData(map);
-            }else {
-                map.put("tip","error");
+            } else {
+                map.put("tip", "error");
                 result.setData(map);
             }
-        }catch (Exception e){
-            result =  exceptionHandle.exceptionGet(e);
+        } catch (Exception e) {
+            result = exceptionHandle.exceptionGet(e);
             logger.error("出现错误");
         }
         return result;
@@ -186,22 +196,22 @@ public class LoginController {
 
     @RequestMapping("/checkPhone.do")
     @ResponseBody
-    public Result checkPhone(String phone){
+    public Result checkPhone(String phone) {
         Result result = ResultUtil.success();
         try {
-            logger.info("phone:"+phone);
+            logger.info("phone:" + phone);
             Map<String, Object> map = new HashMap();
             EntityWrapper<User> userWrapper = new EntityWrapper<User>();
-            userWrapper.eq("phone",phone);
+            userWrapper.eq("phone", phone);
             User user = userService.selectOne(userWrapper);
-            if(StringUtils.isEmpty(user)){
-                map.put("tip","false");
-            }else {
-                map.put("tip","true");
+            if (StringUtils.isEmpty(user)) {
+                map.put("tip", "false");
+            } else {
+                map.put("tip", "true");
             }
             result.setData(map);
-        }catch (Exception e){
-            result =  exceptionHandle.exceptionGet(e);
+        } catch (Exception e) {
+            result = exceptionHandle.exceptionGet(e);
             logger.error("出现错误");
         }
         return result;
@@ -210,21 +220,21 @@ public class LoginController {
     @RequestMapping("/resetPassword.do")
     @ResponseBody
     @Transactional
-    public Result resetPassword(String phone){
+    public Result resetPassword(String phone) {
         Result result = ResultUtil.success();
         try {
-            logger.info("phone:"+phone);
+            logger.info("phone:" + phone);
             Map<String, Object> map = new HashMap();
             boolean isSuccess = userService.resetPassword(phone);
-            if(isSuccess){
-               map.put("tip","success");
-               result.setData(map);
-            }else {
-               map.put("tip","error");
-               result.setData(map);
+            if (isSuccess) {
+                map.put("tip", "success");
+                result.setData(map);
+            } else {
+                map.put("tip", "error");
+                result.setData(map);
             }
-        }catch (Exception e){
-            result =  exceptionHandle.exceptionGet(e);
+        } catch (Exception e) {
+            result = exceptionHandle.exceptionGet(e);
             logger.error("出现错误");
         }
         return result;
@@ -252,26 +262,25 @@ public class LoginController {
      * @param pwd
      * @return
 
-    @RequestMapping(value = "/getResult",method = RequestMethod.POST)
-    @ResponseBody
-    public Result getResult(@RequestParam("name") String name, @RequestParam("pwd") String pwd){
-        Result result = ResultUtil.success();
-        try {
-            if (name.equals("zzp")){
-                result =  ResultUtil.success(new Netapi32Util.UserInfo());
-                logger.info("用户名正确");
-            }else if (name.equals("pzz")){
-                result =  ResultUtil.error(ExceptionEnum.USER_NOT_FIND);
-                logger.info("用户名错误");
-            }else{
-                int i = 1/0;
-            }
-        }catch (Exception e){
-            result =  exceptionHandle.exceptionGet(e);
-            logger.error("出现错误");
-        }
-        return result;
-    }
+     @RequestMapping(value = "/getResult",method = RequestMethod.POST)
+     @ResponseBody public Result getResult(@RequestParam("name") String name, @RequestParam("pwd") String pwd){
+     Result result = ResultUtil.success();
+     try {
+     if (name.equals("zzp")){
+     result =  ResultUtil.success(new Netapi32Util.UserInfo());
+     logger.info("用户名正确");
+     }else if (name.equals("pzz")){
+     result =  ResultUtil.error(ExceptionEnum.USER_NOT_FIND);
+     logger.info("用户名错误");
+     }else{
+     int i = 1/0;
+     }
+     }catch (Exception e){
+     result =  exceptionHandle.exceptionGet(e);
+     logger.error("出现错误");
+     }
+     return result;
+     }
      */
 
 

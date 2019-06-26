@@ -5,11 +5,19 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
+
 import javax.sql.DataSource;
 
+@EnableAsync
+@EnableScheduling
 @SpringBootApplication
 @MapperScan("com.example.demo.mapper")
+@ComponentScan("com.example")
 public class DemoApplication {
 
 	public static void main(String[] args) {
@@ -35,5 +43,11 @@ public class DemoApplication {
 		dataSource.setTestWhileIdle(true);//建议配置为true，不影响性能，并且保证安全性。
 		dataSource.setPoolPreparedStatements(false);//是否缓存preparedStatement，也就是PSCache
 		return dataSource;
+	}
+
+	//为了打包springboot项目
+	protected SpringApplicationBuilder configure(
+			SpringApplicationBuilder builder) {
+		return builder.sources(this.getClass());
 	}
 }
